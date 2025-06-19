@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar class="pokemon-toolbar">
+    <ion-title class="pokemon-title">
+      Pokedex
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="pokemon-wrapper">
+    <ng-container *ngIf="!isLoading; else loading">
+      <div class="pokemon-grid">
+        <div class="pokemon-item" *ngFor="let p of pokemons">
+          <ion-card
+            class="pokemon-card ion-text-center"
+            [ngStyle]="{'background': getCardColor(p.types)}"
+          >
+            <img [src]="p.image" [alt]="p.name" />
+            <ion-card-header>
+              <ion-card-title>{{ p.name | titlecase }}</ion-card-title>
+              <ion-card-subtitle *ngIf="p.types">
+                <span *ngFor="let t of p.types; let last = last">
+                  {{ t | titlecase }}<span *ngIf="!last">, </span>
+                </span>
+              </ion-card-subtitle>
+            </ion-card-header>
+          </ion-card>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #loading>
+      <ion-spinner name="crescent" class="ion-margin"></ion-spinner>
+    </ng-template>
+  </div>
+</ion-content>
+
+
+
+
+
+
