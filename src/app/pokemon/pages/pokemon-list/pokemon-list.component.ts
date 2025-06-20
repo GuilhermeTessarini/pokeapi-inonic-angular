@@ -2,57 +2,121 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 
+import {
+  InfiniteScrollCustomEvent,
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonSpinner,
+} from '@ionic/angular/standalone';
+
 import { PokemonService } from '../../services/pokemon.service';
 import { PokemonItem } from '../../models/pokemon.model';
-
-import { IonicModule } from '@ionic/angular';
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/angular/standalone';
-
 import { getPokemonTypeColor } from '../../utils/pokemon-type-colors';
 
 @Component({
   selector: 'app-pokemon-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+    IonSpinner,
+  ],
   templateUrl: './pokemon-list.component.html',
   styleUrls: ['./pokemon-list.component.scss'],
-  imports: [CommonModule, IonicModule, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle],
 })
 export class PokemonListComponent implements OnInit {
-  pokemons: PokemonItem[] = [];
+  pokemonList: PokemonItem[] = [];
   isLoading = false;
+  isAllLoaded = false;
+
+  private pageLimit = 20;
+  private pageOffset = 0;
 
   constructor(private pokemonService: PokemonService) {}
 
   ngOnInit(): void {
-    this.fetchPokemons();
+    this.isLoading = true;
+    this.loadPokemonPage();
   }
 
-  fetchPokemons(): void {
-    this.isLoading = true;
-    this.pokemonService.getPokemonList().subscribe({
-      next: (response) => {
-        const pokemons = response.results.map((pokemon) => {
-          const id = this.extractIdFromUrl(pokemon.url);
-          return {
-            ...pokemon,
-            id,
-            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
-          };
-        });
+  private loadPokemonPage(event?: InfiniteScrollCustomEvent): void {
+    if (this.isAllLoaded) {
+      event?.target.complete();
+      return;
+    }
 
-        forkJoin(
-          pokemons.map((p) => this.pokemonService.getPokemonDetail(p.id!).pipe())
-        ).subscribe((details: any[]) => {
-          this.pokemons = pokemons.map((p, i) => ({
-            ...p,
-            types: details[i].types.map((t: any) => t.type.name),
-          }));
-          this.isLoading = false;
-        });
-      },
-      error: () => {
-        this.isLoading = false;
-      },
-    });
+    this.pokemonService
+      .getPokemonList(this.pageLimit, this.pageOffset)
+      .subscribe({
+        next: (response) => {
+          if (!response.next || response.results.length < this.pageLimit) {
+            this.isAllLoaded = true;
+          }
+
+          const pokemonsPage = response.results.map((pokemon) => {
+            const id = this.extractIdFromUrl(pokemon.url);
+            return {
+              ...pokemon,
+              id,
+              image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+            };
+          });
+
+          forkJoin(
+            pokemonsPage.map((pokemon) =>
+              this.pokemonService.getPokemonDetail(pokemon.id!)
+            )
+          ).subscribe((details) => {
+            const enrichedPokemons = pokemonsPage.map((pokemon, i) => ({
+              ...pokemon,
+              types: details[i].types.map((t: any) => t.type.name),
+            }));
+
+            this.pokemonList = [...this.pokemonList, ...enrichedPokemons];
+            this.pageOffset += this.pageLimit;
+
+            if (event) {
+              event.target.complete();
+            } else {
+              this.isLoading = false;
+            }
+          });
+        },
+        error: () => {
+          if (event) {
+            event.target.complete();
+          } else {
+            this.isLoading = false;
+          }
+        },
+      });
+  }
+
+  onIonInfinite(event: InfiniteScrollCustomEvent) {
+    this.loadPokemonPage(event);
+  }
+
+  trackByPokemonId(_: number, pokemon: PokemonItem) {
+    return pokemon.id;
   }
 
   private extractIdFromUrl(url: string): number {

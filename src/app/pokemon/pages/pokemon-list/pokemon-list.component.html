@@ -1,41 +1,47 @@
 <ion-header>
   <ion-toolbar class="pokemon-toolbar">
-    <ion-title class="pokemon-title">
-      Pokedex
-    </ion-title>
+    <ion-title class="pokemon-title">Pokédex</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <div class="pokemon-wrapper">
-    <ng-container *ngIf="!isLoading; else loading">
-      <div class="pokemon-grid">
-        <div class="pokemon-item" *ngFor="let p of pokemons">
-          <ion-card
-            class="pokemon-card ion-text-center"
-            [ngStyle]="{'background': getCardColor(p.types)}"
-          >
-            <img [src]="p.image" [alt]="p.name" />
-            <ion-card-header>
-              <ion-card-title>{{ p.name | titlecase }}</ion-card-title>
-              <ion-card-subtitle *ngIf="p.types">
-                <span *ngFor="let t of p.types; let last = last">
-                  {{ t | titlecase }}<span *ngIf="!last">, </span>
-                </span>
-              </ion-card-subtitle>
-            </ion-card-header>
-          </ion-card>
-        </div>
+    @if (pokemonList.length === 0 && isLoading) {
+    <ion-spinner name="crescent" class="ion-center"></ion-spinner>
+    } @if (pokemonList.length > 0) {
+    <div class="pokemon-grid">
+      @for (pokemon of pokemonList; track pokemon.id) {
+      <div class="pokemon-item">
+        <ion-card
+          class="pokemon-card ion-text-center"
+          [ngStyle]="{ background: getCardColor(pokemon.types) }"
+        >
+          <img [src]="pokemon.image" [alt]="pokemon.name" />
+          <ion-card-header>
+            <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
+            @if (pokemon.types) {
+            <ion-card-subtitle>
+              @for (type of pokemon.types; track type; let last = $last) {
+              {{ type | titlecase }}<span *ngIf="!last">, </span>
+              }
+            </ion-card-subtitle>
+            }
+          </ion-card-header>
+        </ion-card>
       </div>
-    </ng-container>
-    <ng-template #loading>
-      <ion-spinner name="crescent" class="ion-margin"></ion-spinner>
-    </ng-template>
+      }
+    </div>
+    }
+
+    <ion-infinite-scroll
+      threshold="100px"
+      (ionInfinite)="onIonInfinite($event)"
+    >
+      <ion-infinite-scroll-content
+        loadingSpinner="crescent"
+        [loadingText]="isAllLoaded ? 'Não há mais Pokémons' : 'Carregando mais…'"
+      >
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
   </div>
 </ion-content>
-
-
-
-
-
-
