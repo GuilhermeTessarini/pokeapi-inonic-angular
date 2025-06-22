@@ -15,6 +15,7 @@
         <ion-card
           class="pokemon-card ion-text-center"
           [ngStyle]="{ background: getCardColor(pokemon.types) }"
+          (click)="goToDetails(pokemon.id)"
         >
           <img [src]="pokemon.image" [alt]="pokemon.name" />
           <ion-card-header>

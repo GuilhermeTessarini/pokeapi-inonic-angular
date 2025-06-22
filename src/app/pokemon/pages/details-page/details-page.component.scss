@@ -1,0 +1,158 @@
+.details-wrapper {
+  padding: 24px 8px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.details-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.details-card ion-card-title,
+.details-card ion-card-subtitle {
+  color: #222 !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.18);
+}
+
+.pokemon-img {
+  width: 70%;
+  max-width: 220px;
+  margin: 24px auto 0 auto;
+  display: block;
+  background: transparent;
+}
+
+.type-badges {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 12px;
+  color: #222;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.ability-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 10px 0;
+  justify-content: flex-start;
+}
+
+.ability-badge {
+  background: #fff9c4;
+  color: #222;
+  border-radius: 10px;
+  padding: 2px 10px;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.move-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 10px 0;
+  justify-content: flex-start;
+}
+
+.move-badge {
+  background: #e3f2fd;
+  color: #222;
+  border-radius: 10px;
+  padding: 2px 10px;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.details-info {
+  text-align: left;
+  margin: 18px 0 12px 0;
+  font-size: 1.05rem;
+  color: #222;
+  line-height: 1.7;
+  padding-bottom: 48px;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #2d3a4a;
+  margin-right: 6px;
+}
+
+.info-value {
+  font-weight: 500;
+  color: #444;
+}
+
+.stats-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.stat-name {
+  display: inline-block;
+  width: 90px;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+.stat-bar-bg {
+  background: #e0e0e0;
+  border-radius: 8px;
+  height: 8px;
+  width: 100%;
+  margin: 4px 0 10px 0;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.stat-bar {
+  background: #1976d2;
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s;
+}
+
+@media (max-width: 600px) {
+  .details-card {
+    max-width: 98vw;
+    padding: 0 2vw;
+  }
+  .pokemon-img {
+    width: 90%;
+    max-width: 180px;
+  }
+  .info-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+

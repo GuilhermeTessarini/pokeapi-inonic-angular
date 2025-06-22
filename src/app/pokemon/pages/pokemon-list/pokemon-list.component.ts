@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
+import { Router } from '@angular/router';
 
 import {
   InfiniteScrollCustomEvent,
@@ -51,7 +52,7 @@ export class PokemonListComponent implements OnInit {
   private pageLimit = 20;
   private pageOffset = 0;
 
-  constructor(private pokemonService: PokemonService) {}
+  constructor(private pokemonService: PokemonService, private router: Router) {}
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -126,5 +127,11 @@ export class PokemonListComponent implements OnInit {
 
   getCardColor(types: string[] = []): string {
     return getPokemonTypeColor(types);
+  }
+
+  goToDetails(id?: number) {
+    if (typeof id === 'number') {
+      this.router.navigate(['/pokemon', id]);
+    }
   }
 }
