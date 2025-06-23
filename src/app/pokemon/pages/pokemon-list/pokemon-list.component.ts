@@ -19,7 +19,7 @@ import {
   IonSpinner,
 } from '@ionic/angular/standalone';
 
-import { PokemonService } from '../../services/pokemon.service';
+import { PokemonService } from '../../services/PokemonService/pokemon.service';
 import { PokemonItem } from '../../models/pokemon.model';
 import { getPokemonTypeColor } from '../../utils/pokemon-type-colors';
 

@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonSpinner, IonButton, IonIcon, IonCardContent } from '@ionic/angular/standalone';
-import { PokemonService } from '../../services/pokemon.service';
+
+import { PokemonService } from '../../services/PokemonService/pokemon.service';
+import { FavoritesService } from '../../services/FavoritesService/favorites.service';
 import { getPokemonTypeColor } from '../../utils/pokemon-type-colors';
 
 @Component({
@@ -29,16 +32,19 @@ import { getPokemonTypeColor } from '../../utils/pokemon-type-colors';
 export class DetailsPageComponent implements OnInit {
   pokemon: any = null;
   isLoading = true;
+  isFavorite = false;
 
   constructor(
     private route: ActivatedRoute,
-    private pokemonService: PokemonService
+    private pokemonService: PokemonService,
+    private favoritesService: FavoritesService
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.loadPokemonDetails(id);
+      this.isFavorite = this.favoritesService.isFavorite(id);
     }
   }
 
@@ -57,5 +63,11 @@ export class DetailsPageComponent implements OnInit {
 
   getTypeColor(type: string): string {
     return getPokemonTypeColor([type]);
+  }
+
+  toggleFavorite(): void {
+    if (!this.pokemon) return;
+    this.favoritesService.toggleFavorite(this.pokemon.id);
+    this.isFavorite = this.favoritesService.isFavorite(this.pokemon.id);
   }
 }

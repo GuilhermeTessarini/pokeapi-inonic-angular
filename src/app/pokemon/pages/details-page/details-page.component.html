@@ -5,66 +5,95 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div class="details-wrapper" *ngIf="!isLoading && pokemon; else loading">
-    <ion-card [ngStyle]="{'background': getTypeColor(pokemon.types[0].type.name)}" class="details-card">
-      <ion-card-header>
-        <img [src]="pokemon.sprites.other['official-artwork'].front_default" [alt]="pokemon.name" class="pokemon-img" />
-        <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
-        <ion-card-subtitle>
-          #{{ pokemon.id }}
-          <span class="type-badges">
-            <span *ngFor="let t of pokemon.types; let last = last" class="type-badge" [ngStyle]="{'background': getTypeColor(t.type.name)}">
-              {{ t.type.name | titlecase }}
+  @if (!isLoading && pokemon) {
+    <div class="details-wrapper">
+      <ion-card [ngStyle]="{'background': getTypeColor(pokemon.types[0].type.name)}" class="details-card">
+        <ion-card-header>
+          <div class="favorite-btn-wrapper">
+            <ion-button
+              fill="clear"
+              color="danger"
+              size="large"
+              (click)="toggleFavorite()"
+              class="favorite-btn"
+              [attr.aria-label]="isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+              [attr.aria-pressed]="isFavorite"
+            >
+              <ion-icon
+                [name]="isFavorite ? 'heart' : 'heart-outline'"
+                slot="icon-only"
+              ></ion-icon>
+            </ion-button>
+          </div>
+          <img [src]="pokemon.sprites.other['official-artwork'].front_default" [alt]="pokemon.name" class="pokemon-img" />
+          <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
+          <ion-card-subtitle>
+            #{{ pokemon.id }}
+            <span class="type-badges">
+              @for (t of pokemon.types; track t.type.name; let last = $last) {
+                <span class="type-badge" [ngStyle]="{'background': getTypeColor(t.type.name)}">
+                  {{ t.type.name | titlecase }}
+                </span>
+              }
             </span>
-          </span>
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="details-info">
-          <div class="info-row">
-            <div>
-              <span class="info-label">Peso:</span>
-              <span class="info-value">{{ pokemon.weight / 10 }} kg</span>
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="details-info">
+            <div class="info-row">
+              <div>
+                <span class="info-label">Peso:</span>
+                <span class="info-value">{{ pokemon.weight / 10 }} kg</span>
+              </div>
+              <div>
+                <span class="info-label">Altura:</span>
+                <span class="info-value">{{ pokemon.height / 10 }} m</span>
+              </div>
             </div>
             <div>
-              <span class="info-label">Altura:</span>
-              <span class="info-value">{{ pokemon.height / 10 }} m</span>
+              <span class="info-label">Habilidades:</span>
+              <span class="ability-badges">
+                @for (ability of pokemon.abilities; track ability.ability.name; let last = $last) {
+                  <span class="ability-badge">
+                    {{ ability.ability.name | titlecase }}<span *ngIf="!last">, </span>
+                  </span>
+                }
+              </span>
+            </div>
+            <div>
+              <span class="info-label">Status Base:</span>
+              <ul class="stats-list">
+                @for (stat of pokemon.stats; track stat.stat.name) {
+                  <li>
+                    <span class="stat-name">{{ stat.stat.name | titlecase }}</span>
+                    <span class="stat-value">{{ stat.base_stat }}</span>
+                    <div class="stat-bar-bg">
+                      <div class="stat-bar" [style.width.%]="stat.base_stat / 2"></div>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+            <div>
+              <span class="info-label">Movimentos:</span>
+              <span class="move-badges">
+                @for (move of pokemon.moves.slice(0, 6); track move.move.name; let last = $last) {
+                  <span class="move-badge">
+                    {{ move.move.name | titlecase }}<span *ngIf="!last">, </span>
+                  </span>
+                }
+                @if (pokemon.moves.length > 6) {
+                  <span>...</span>
+                }
+              </span>
             </div>
           </div>
-          <div>
-            <span class="info-label">Habilidades:</span>
-            <span class="ability-badges">
-              <span *ngFor="let ability of pokemon.abilities; let last = last" class="ability-badge">
-                {{ ability.ability.name | titlecase }}<span *ngIf="!last">, </span>
-              </span>
-            </span>
-          </div>
-          <div>
-            <span class="info-label">Status Base:</span>
-            <ul class="stats-list">
-              <li *ngFor="let stat of pokemon.stats">
-                <span class="stat-name">{{ stat.stat.name | titlecase }}</span>
-                <span class="stat-value">{{ stat.base_stat }}</span>
-                <div class="stat-bar-bg">
-                  <div class="stat-bar" [style.width.%]="stat.base_stat / 2"></div>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <span class="info-label">Movimentos:</span>
-            <span class="move-badges">
-              <span *ngFor="let move of pokemon.moves.slice(0, 6); let last = last" class="move-badge">
-                {{ move.move.name | titlecase }}<span *ngIf="!last">, </span>
-              </span>
-              <span *ngIf="pokemon.moves.length > 6">...</span>
-            </span>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
-  </div>
-  <ng-template #loading>
-    <ion-spinner name="crescent" class="ion-center"></ion-spinner>
-  </ng-template>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  } @else {
+    <ng-template #loading>
+      <ion-spinner name="crescent" class="ion-center"></ion-spinner>
+    </ng-template>
+  }
 </ion-content>
