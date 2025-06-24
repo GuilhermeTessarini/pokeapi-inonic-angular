@@ -1,0 +1,28 @@
+.pokemon-tabs {
+  display: flex;
+  justify-content: space-around;
+  background-color: #f5fafd;
+  padding: 10px 0;
+}
+
+.pokemon-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.pokemon-tab.active {
+  background-color: #e0e0e0;
+  font-weight: bold;
+}
+
+.pokemon-tab ion-icon {
+  font-size: 24px;
+}
+
+.pokemon-tab span {
+  display: block;
+  font-size: 12px;
+}

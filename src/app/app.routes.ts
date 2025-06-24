@@ -1,17 +1,35 @@
 import { Routes } from '@angular/router';
+import { TabsComponent } from './tabs/tabs.component';
 
 export const routes: Routes = [
   {
-    path: 'home',
-    loadComponent: () => import('./pokemon/pages/pokemon-list/pokemon-list.component').then((m) => m.PokemonListComponent),
-  },
-  {
-  path: 'pokemon/:id',
-  loadComponent: () => import('./pokemon/pages/details-page/details-page.component').then(m => m.DetailsPageComponent)
+    path: 'tabs',
+    component: TabsComponent,
+    children: [
+      {
+        path: 'pokemon-list',
+        loadComponent: () =>
+          import('./pokemon/pages/pokemon-list/pokemon-list.component').then(
+            (m) => m.PokemonListComponent
+          ),
+      },
+      {
+        path: 'details/:id',
+        loadComponent: () =>
+          import('./pokemon/pages/details-page/details-page.component').then(
+            (m) => m.DetailsPageComponent
+          ),
+      },
+      {
+        path: '',
+        redirectTo: 'pokemon-list',
+        pathMatch: 'full',
+      },
+    ],
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: '/tabs/pokemon-list',
     pathMatch: 'full',
   },
 ];

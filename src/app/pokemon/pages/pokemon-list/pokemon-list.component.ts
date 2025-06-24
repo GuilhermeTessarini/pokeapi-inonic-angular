@@ -131,7 +131,7 @@ export class PokemonListComponent implements OnInit {
 
   goToDetails(id?: number) {
     if (typeof id === 'number') {
-      this.router.navigate(['/pokemon', id]);
+      this.router.navigate(['/tabs/details', id]);
     }
   }
 }
