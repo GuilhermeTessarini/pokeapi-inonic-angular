@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ToastController } from '@ionic/angular';
 
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonSpinner, IonButton, IonIcon, IonCardContent } from '@ionic/angular/standalone';
 
@@ -37,7 +38,8 @@ export class DetailsPageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pokemonService: PokemonService,
-    private favoritesService: FavoritesService
+    private favoritesService: FavoritesService,
+    private toastController: ToastController
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +49,7 @@ export class DetailsPageComponent implements OnInit {
       this.isFavorite = this.favoritesService.isFavorite(id);
     }
   }
-
+  
   private loadPokemonDetails(id: number): void {
     this.isLoading = true;
     this.pokemonService.getPokemonDetail(id).subscribe({
@@ -57,6 +59,7 @@ export class DetailsPageComponent implements OnInit {
       },
       error: () => {
         this.isLoading = false;
+        this.showErrorToast('Erro ao carregar detalhes do Pokémon.');
       }
     });
   }
@@ -69,5 +72,15 @@ export class DetailsPageComponent implements OnInit {
     if (!this.pokemon) return;
     this.favoritesService.toggleFavorite(this.pokemon.id);
     this.isFavorite = this.favoritesService.isFavorite(this.pokemon.id);
+  }
+
+  private async showErrorToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color: 'danger',
+      position: 'bottom',
+    });
+    toast.present();
   }
 }

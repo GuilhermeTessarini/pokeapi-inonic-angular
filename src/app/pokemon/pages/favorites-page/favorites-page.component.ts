@@ -14,6 +14,7 @@ import {
   IonInfiniteScrollContent,
   IonSpinner,
   IonIcon,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { heart } from 'ionicons/icons';
@@ -53,7 +54,8 @@ export class FavoritesPageComponent implements ViewWillEnter {
   constructor(
     private favoritesService: FavoritesService,
     private pokemonService: PokemonService,
-    private router: Router
+    private router: Router,
+    private toastController: ToastController
   ) {
     addIcons({ heart });
   }
@@ -88,6 +90,7 @@ export class FavoritesPageComponent implements ViewWillEnter {
       },
       error: () => {
         this.loading = false;
+        this.showErrorToast('Erro ao carregar os favoritos. Tente novamente.');
       },
     });
   }
@@ -100,5 +103,15 @@ export class FavoritesPageComponent implements ViewWillEnter {
     if (typeof id === 'number') {
       this.router.navigate(['/tabs/details', id]);
     }
+  }
+
+  async showErrorToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color: 'danger',
+      position: 'bottom',
+    });
+    toast.present();
   }
 }

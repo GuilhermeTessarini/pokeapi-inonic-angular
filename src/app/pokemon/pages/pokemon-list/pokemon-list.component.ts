@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 import {
   InfiniteScrollCustomEvent,
@@ -52,7 +53,11 @@ export class PokemonListComponent implements OnInit {
   private pageLimit = 20;
   private pageOffset = 0;
 
-  constructor(private pokemonService: PokemonService, private router: Router) {}
+  constructor(
+    private pokemonService: PokemonService,
+    private router: Router,
+    private toastController: ToastController
+  ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -108,6 +113,7 @@ export class PokemonListComponent implements OnInit {
           } else {
             this.isLoading = false;
           }
+          this.showErrorToast('Erro ao carregar a lista de Pokémons.');
         },
       });
   }
@@ -133,5 +139,15 @@ export class PokemonListComponent implements OnInit {
     if (typeof id === 'number') {
       this.router.navigate(['/tabs/details', id]);
     }
+  }
+
+  private async showErrorToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color: 'danger',
+      position: 'bottom',
+    });
+    toast.present();
   }
 }
