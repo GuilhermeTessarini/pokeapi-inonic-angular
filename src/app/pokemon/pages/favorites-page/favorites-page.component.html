@@ -1,16 +1,16 @@
 <ion-header>
   <ion-toolbar class="pokemon-toolbar">
-    <ion-title class="pokemon-title">Pokédex</ion-title>
+    <ion-title class="pokemon-title">Favoritos</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <div class="pokemon-wrapper">
-    @if (pokemonList.length === 0 && isLoading) {
+    @if (loading) {
     <ion-spinner name="crescent" class="ion-center"></ion-spinner>
-    } @if (pokemonList.length > 0) {
+    } @if (!loading && favoritePokemons.length > 0) {
     <div class="pokemon-grid">
-      @for (pokemon of pokemonList; track pokemon.id) {
+      @for (pokemon of favoritePokemons; track pokemon.id) {
       <div class="pokemon-item">
         <ion-card
           class="pokemon-card ion-text-center"
@@ -20,7 +20,7 @@
           <img [src]="pokemon.image" [alt]="pokemon.name" />
           <ion-card-header>
             <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
-            @if (pokemon.types) {
+            @if (pokemon.types?.length > 0) {
             <ion-card-subtitle>
               @for (type of pokemon.types; track type; let last = $last) {
               {{ type | titlecase }}@if (!last) {<span>, </span>} }
@@ -31,19 +31,13 @@
       </div>
       }
     </div>
+    } @if (!loading && favoritePokemons.length === 0) {
+    <div class="no-favorites-message ion-padding ion-text-center">
+      <div class="no-favorites-title">Nenhum pokémon favoritado</div>
+      <div class="no-favorites-desc">
+        Toque no <ion-icon name="heart" class="inline-heart"></ion-icon> em um pokémon para adicioná-lo aos favoritos!
+      </div>
+    </div>
     }
-
-    <ion-infinite-scroll
-      threshold="100px"
-      (ionInfinite)="onIonInfinite($event)"
-    >
-      <ion-infinite-scroll-content
-        loadingSpinner="crescent"
-        [loadingText]="
-          isAllLoaded ? 'Não há mais Pokémons' : 'Carregando mais…'
-        "
-      >
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
   </div>
 </ion-content>

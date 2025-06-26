@@ -21,6 +21,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'favorites',
+        loadComponent: () =>
+          import('./pokemon/pages/favorites-page/favorites-page.component').then(
+            (m) => m.FavoritesPageComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'pokemon-list',
         pathMatch: 'full',
