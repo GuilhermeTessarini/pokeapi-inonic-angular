@@ -6,9 +6,9 @@
 
 <ion-content [fullscreen]="true">
   <div class="pokemon-wrapper">
-    @if (loading) {
+    @if (isLoading) {
     <ion-spinner name="crescent" class="ion-center"></ion-spinner>
-    } @if (!loading && favoritePokemons.length > 0) {
+    } @if (!isLoading && favoritePokemons.length > 0) {
     <div class="pokemon-grid">
       @for (pokemon of favoritePokemons; track pokemon.id) {
       <div class="pokemon-item">
@@ -31,7 +31,7 @@
       </div>
       }
     </div>
-    } @if (!loading && favoritePokemons.length === 0) {
+    } @if (!isLoading && favoritePokemons.length === 0) {
     <div class="no-favorites-message ion-padding ion-text-center">
       <div class="no-favorites-title">Nenhum pokémon favoritado</div>
       <div class="no-favorites-desc">

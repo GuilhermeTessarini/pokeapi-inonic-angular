@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonContent,
@@ -17,12 +17,11 @@ import {
   ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { heart } from 'ionicons/icons';
+import { heart, heartOutline } from 'ionicons/icons';
 import { FavoritesService } from '../../services/FavoritesService/favorites.service';
 import { PokemonService } from '../../services/PokemonService/pokemon.service';
 import { getPokemonTypeColor } from '../../utils/pokemon-type-colors';
 import { Router } from '@angular/router';
-import { ViewWillEnter } from '@ionic/angular';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -47,9 +46,9 @@ import { forkJoin } from 'rxjs';
     IonIcon,
   ],
 })
-export class FavoritesPageComponent implements ViewWillEnter {
+export class FavoritesPageComponent implements OnInit {
   favoritePokemons: any[] = [];
-  loading = true;
+  isLoading = false;
 
   constructor(
     private favoritesService: FavoritesService,
@@ -57,19 +56,19 @@ export class FavoritesPageComponent implements ViewWillEnter {
     private router: Router,
     private toastController: ToastController
   ) {
-    addIcons({ heart });
+    addIcons({ heart, heartOutline });
   }
 
-  ionViewWillEnter() {
+  ngOnInit() {
     this.loadFavorites();
   }
 
   loadFavorites() {
-    this.loading = true;
+    this.isLoading = true;
     const ids = this.favoritesService.getFavorites();
     this.favoritePokemons = [];
     if (ids.length === 0) {
-      this.loading = false;
+      this.isLoading = false;
       return;
     }
 
@@ -86,11 +85,13 @@ export class FavoritesPageComponent implements ViewWillEnter {
             types: pokemon.types?.map((t: any) => t.type.name) ?? [],
           }))
           .sort((a, b) => a.id - b.id);
-        this.loading = false;
+        this.isLoading = false;
       },
       error: () => {
-        this.loading = false;
-        this.showErrorToast('Erro ao carregar os favoritos. Tente novamente.');
+        this.isLoading = false;
+        void this.showErrorToast(
+          'Erro ao carregar os favoritos. Tente novamente.'
+        );
       },
     });
   }
@@ -105,7 +106,7 @@ export class FavoritesPageComponent implements ViewWillEnter {
     }
   }
 
-  async showErrorToast(message: string) {
+  private async showErrorToast(message: string) {
     const toast = await this.toastController.create({
       message,
       duration: 3000,
