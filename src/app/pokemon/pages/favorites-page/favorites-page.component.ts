@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonContent,
@@ -19,7 +19,7 @@ import { FavoritesService } from '../../services/FavoritesService/favorites.serv
 import { PokemonService } from '../../services/PokemonService/pokemon.service';
 import { getPokemonTypeColor } from '../../utils/pokemon-type-colors';
 import { Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-favorites-page',
@@ -40,9 +40,10 @@ import { forkJoin } from 'rxjs';
     IonIcon,
   ],
 })
-export class FavoritesPageComponent implements OnInit {
+export class FavoritesPageComponent implements OnInit, OnDestroy {
   favoritePokemons: any[] = [];
   isLoading = false;
+  private favoritesSub?: Subscription;
 
   constructor(
     private favoritesService: FavoritesService,
@@ -55,6 +56,13 @@ export class FavoritesPageComponent implements OnInit {
 
   ngOnInit() {
     this.loadFavorites();
+    this.favoritesSub = this.favoritesService.favoritesChanged$.subscribe(() => {
+      this.loadFavorites();
+    });
+  }
+
+  ngOnDestroy() {
+    this.favoritesSub?.unsubscribe();
   }
 
   loadFavorites() {

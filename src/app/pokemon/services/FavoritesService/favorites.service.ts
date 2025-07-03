@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavoritesService {
   private storageKey = 'favoritePokemons';
+  private favoritesChanged = new BehaviorSubject<void>(undefined);
+
+  favoritesChanged$ = this.favoritesChanged.asObservable();
 
   getFavorites(): number[] {
     const data = localStorage.getItem(this.storageKey);
@@ -20,12 +24,14 @@ export class FavoritesService {
     if (!favorites.includes(id)) {
       favorites.push(id);
       localStorage.setItem(this.storageKey, JSON.stringify(favorites));
+      this.favoritesChanged.next();
     }
   }
 
   removeFavorite(id: number): void {
     const favorites = this.getFavorites().filter(favId => favId !== id);
     localStorage.setItem(this.storageKey, JSON.stringify(favorites));
+    this.favoritesChanged.next();
   }
 
   toggleFavorite(id: number): void {
