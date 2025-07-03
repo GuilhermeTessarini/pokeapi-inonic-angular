@@ -4,7 +4,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content>
   @if (!isLoading && pokemon) {
     <div class="details-wrapper">
       <ion-card [ngStyle]="{'background': getTypeColor(pokemon.types[0].type.name)}" class="details-card">

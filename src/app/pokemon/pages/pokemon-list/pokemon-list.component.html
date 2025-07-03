@@ -1,6 +1,6 @@
 <ion-header>
-  <ion-toolbar class="pokemon-toolbar">
-    <ion-title class="pokemon-title">Pokédex</ion-title>
+  <ion-toolbar>
+    <ion-title>Pokédex</ion-title>
   </ion-toolbar>
   <ion-searchbar
     [(ngModel)]="searchTerm"
@@ -11,16 +11,15 @@
     inputmode="search"
     aria-label="Buscar Pokémon"
   ></ion-searchbar>
-  <ul *ngIf="suggestions.length > 0" class="suggestions-list" role="listbox">
-    <li
-      *ngFor="let name of suggestions"
-      (click)="selectSuggestion(name)"
-      role="option"
-      tabindex="0"
-    >
+  @if (suggestions.length > 0) {
+  <ul class="suggestions-list" role="listbox">
+    @for (name of suggestions; track name) {
+    <li (click)="selectSuggestion(name)" role="option" tabindex="0">
       {{ name | titlecase }}
     </li>
+    }
   </ul>
+  }
 </ion-header>
 
 <ion-content>
@@ -40,18 +39,18 @@
           <ion-card-header>
             <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
             @if (pokemon.types) {
-              <ion-card-subtitle>
-                @for (type of pokemon.types; track type; let last = $last) {
-                  {{ type | titlecase }}@if (!last) {<span>, </span>} }
-              </ion-card-subtitle>
+            <ion-card-subtitle>
+              @for (type of pokemon.types; track type; let last = $last) {
+              {{ type | titlecase }}@if (!last) {<span>, </span>} }
+            </ion-card-subtitle>
             }
           </ion-card-header>
         </ion-card>
       </div>
       }
     </div>
-    }
-    @if (!isLoading && filteredPokemonList.length === 0 && pokemonList.length > 0) {
+    } @if (!isLoading && filteredPokemonList.length === 0 && pokemonList.length
+    > 0) {
     <div class="ion-text-center no-pokemon-message">
       Nenhum Pokémon encontrado.
     </div>
@@ -70,6 +69,4 @@
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
-
-  
 </ion-content>
