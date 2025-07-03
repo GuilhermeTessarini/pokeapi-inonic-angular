@@ -2,15 +2,34 @@
   <ion-toolbar class="pokemon-toolbar">
     <ion-title class="pokemon-title">Pokédex</ion-title>
   </ion-toolbar>
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    (ionInput)="onSearch($event)"
+    placeholder="Buscar Pokémon por nome"
+    showClearButton="focus"
+    debounce="300"
+    inputmode="search"
+    aria-label="Buscar Pokémon"
+  ></ion-searchbar>
+  <ul *ngIf="suggestions.length > 0" class="suggestions-list" role="listbox">
+    <li
+      *ngFor="let name of suggestions"
+      (click)="selectSuggestion(name)"
+      role="option"
+      tabindex="0"
+    >
+      {{ name | titlecase }}
+    </li>
+  </ul>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content>
   <div class="pokemon-wrapper">
     @if (pokemonList.length === 0 && isLoading) {
     <ion-spinner name="crescent" class="ion-center"></ion-spinner>
-    } @if (pokemonList.length > 0) {
+    } @if (filteredPokemonList.length > 0) {
     <div class="pokemon-grid">
-      @for (pokemon of pokemonList; track pokemon.id) {
+      @for (pokemon of filteredPokemonList; track pokemon.id) {
       <div class="pokemon-item">
         <ion-card
           class="pokemon-card ion-text-center"
@@ -21,15 +40,20 @@
           <ion-card-header>
             <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
             @if (pokemon.types) {
-            <ion-card-subtitle>
-              @for (type of pokemon.types; track type; let last = $last) {
-              {{ type | titlecase }}@if (!last) {<span>, </span>} }
-            </ion-card-subtitle>
+              <ion-card-subtitle>
+                @for (type of pokemon.types; track type; let last = $last) {
+                  {{ type | titlecase }}@if (!last) {<span>, </span>} }
+              </ion-card-subtitle>
             }
           </ion-card-header>
         </ion-card>
       </div>
       }
+    </div>
+    }
+    @if (!isLoading && filteredPokemonList.length === 0 && pokemonList.length > 0) {
+    <div class="ion-text-center no-pokemon-message">
+      Nenhum Pokémon encontrado.
     </div>
     }
 
@@ -46,4 +70,6 @@
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
+
+  
 </ion-content>
